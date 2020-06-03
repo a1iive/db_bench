@@ -53,3 +53,11 @@ include/table_builder.h
 Ref:
 https://github.com/wiredtiger/wiredtiger/wiki/Btree-vs-LSM
 https://github.com/wiredtiger/wiredtiger/wiki/LevelDB-Benchmark
+
+WiredTiger Benchmark:
+bulid
+    make db_bench_wiredtiger
+doc/bench/db_bench_wiredtiger.cc
+    main code
+bench_example.sh
+    run sh
