@@ -2,35 +2,41 @@
 
 db_path="/home/hhs/WT_bench"
 
-# key_size="16"
+key_size="16" #默认，暂时不能修改
 value_size="16"
 
 # benchmarks="fillrandom,stats,readrandom,stats,rangerandom,stats,updaterandom,stats,deleterandom" 
 benchmarks="fillrandom,readrandom,rangerandom,updaterandom,deleterandom" 
 
 #num="1000000"  #
-num="10000000"  #1千万，0.32G
-# num="100000000"  #1亿，3.2G
+#num="10000000"  #1千万，0.32G
+num="100000000"  #1亿，3.2G
 #num="1000000000"  #10亿，32G
 #num="10000000000"  #100亿，320G
 
-cache_size="`expr 128 \* 1024 \* 1024`"
+cache_size="`expr $num \* \( $key_size + $value_size \) \* 1 / 10 `"
 
-#reads="1000000"
 reads="10000000"  #读取固定1千万条
 deletes="10000000" #删除1千万条
 updates="10000000" #修改1千万条
 
+seek_nexts="20"
+
 threads="4"
 use_lsm="0"
-
-batch_size="100"
 #bloom_bits="10"
 
-seek_nexts="20"
-direct_io="0"
+batch_size="100"  #没作用，没有发现有batch操作
+
+direct_io="0" # 1 = [data]; 2 = [data,log] (有问题)
 
 stats_type="0"
+
+log_enable="0"
+# log_file_max="`expr 64 \* 1024 \* 1024 `"
+
+transaction_sync_enable="1"
+
 const_params=""
 
 function FILL_PATAMS() {
@@ -46,7 +52,11 @@ function FILL_PATAMS() {
         const_params=$const_params"--benchmarks=$benchmarks "
     fi
 
-    if [ -n "$nums" ];then
+    if [ -n "$cache_size" ];then
+        const_params=$const_params"--cache_size=$cache_size "
+    fi
+    
+    if [ -n "$num" ];then
         const_params=$const_params"--num=$num "
     fi
 
@@ -88,6 +98,18 @@ function FILL_PATAMS() {
 
     if [ -n "$stats_type" ];then
         const_params=$const_params"--stats_type=$stats_type "
+    fi
+
+    if [ -n "$log_enable" ];then
+        const_params=$const_params"--log_enable=$log_enable "
+    fi
+
+    if [ -n "$log_file_max" ];then
+        const_params=$const_params"--log_file_max=$log_file_max "
+    fi
+
+    if [ -n "$transaction_sync_enable" ];then
+        const_params=$const_params"--transaction_sync_enable=$transaction_sync_enable "
     fi
 
 }

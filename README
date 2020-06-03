@@ -49,3 +49,7 @@ include/env.h
 include/table.h
 include/table_builder.h
     Lower-level modules that most clients probably won't use directly
+
+Ref:
+https://github.com/wiredtiger/wiredtiger/wiki/Btree-vs-LSM
+https://github.com/wiredtiger/wiredtiger/wiki/LevelDB-Benchmark

@@ -168,8 +168,8 @@ db_bench_ydb: doc/bench/db_bench_ydb.o $(LIBRARY) $(TESTUTIL)
 	$(CXX) doc/bench/db_bench_ydb.o $(LIBRARY) $(TESTUTIL) -o $@ $(LDFLAGS) -ltokufractaltree -ltokuportability -ljemalloc -ldl -lz
 
 db_bench_wiredtiger: doc/bench/db_bench_wiredtiger.o $(LIBRARY) $(TESTUTIL)
-	$(CXX) doc/bench/db_bench_wiredtiger.o $(LIBRARY) $(TESTUTIL) -o $@ $(LDFLAGS) /usr/local/lib/libwiredtiger.a -ldl
-
+	#$(CXX) doc/bench/db_bench_wiredtiger.o $(LIBRARY) $(TESTUTIL) -o $@ $(LDFLAGS) /usr/local/lib/libwiredtiger.a -ldl
+	$(CXX) doc/bench/db_bench_wiredtiger.o $(LIBRARY) $(TESTUTIL) -o $@ $(LDFLAGS) -lwiredtiger -ldl -lsnappy
 leveldbutil: db/leveldb_main.o $(LIBOBJECTS)
 	$(CXX) $(LDFLAGS) db/leveldb_main.o $(LIBOBJECTS) -o $@ $(LIBS)
 

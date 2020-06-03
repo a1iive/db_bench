@@ -145,6 +145,15 @@ static int FLAGS_batch_size = 1;
 //
 static int FLAGS_direct_io = 0;
 
+//
+static size_t FLAGS_log_file_max = 0;
+static int FLAGS_log_enable = false;
+// Was a log file_max set?
+static bool FLAGS_log_set = false;
+
+//
+static int FLAGS_transaction_sync_enable = 0;
+
 static int *shuff = NULL;
 
 // Array of seeds for RNG, one per thread
@@ -797,7 +806,7 @@ class Benchmark {
     arg[0].thread->stats.Report(name);
 
     for (int i = 0; i < n; i++) {
-	  seeds[i] = arg[i].thread->rand.Next();
+	    // seeds[i] = arg[i].thread->rand.Next();
       delete arg[i].thread;
     }
     delete[] arg;
@@ -902,6 +911,15 @@ class Benchmark {
       config << ",statistics=(all)";
     else if(FLAGS_stats_type == 1)
       config << ",statistics=(fast)";
+    if (FLAGS_log_enable == 1){
+      config << ",log=(enabled=true";
+      if (FLAGS_log_set)
+        config << ",file_max=" << FLAGS_log_file_max;
+      config << ")";
+    }
+    if (FLAGS_transaction_sync_enable == 1){
+      config << ",transaction_sync=(enabled=true)";
+    }
     /* TODO: Translate write_buffer_size - maybe it's chunk size?
     options.write_buffer_size = FLAGS_write_buffer_size;
     */
@@ -1589,6 +1607,15 @@ int main(int argc, char** argv) {
     } else if (sscanf(argv[i], "--cache_size=%zd%c", &n, &junk) == 1) {
       FLAGS_cache_size = n;
 	    FLAGS_cache_set = true;
+    } else if (sscanf(argv[i], "--log_enable=%zd%c", &n, &junk) == 1 &&
+                ( n == 0 || n == 1)) {
+      FLAGS_log_enable = n;
+    } else if (sscanf(argv[i], "--log_file_max=%zd%c", &n, &junk) == 1) {
+      FLAGS_log_file_max = n;
+      FLAGS_log_set = true;
+    } else if (sscanf(argv[i], "--transaction_sync_enable=%zd%c", &n, &junk) == 1 &&
+                ( n == 0 || n == 1)) {
+      FLAGS_transaction_sync_enable = n;
     } else if (sscanf(argv[i], "--bloom_bits=%zd%c", &n, &junk) == 1) {
       FLAGS_bloom_bits = n;
     } else if (sscanf(argv[i], "--batch_size=%zd%c", &n, &junk) == 1) {
